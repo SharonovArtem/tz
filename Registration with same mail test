@@ -1,0 +1,74 @@
+using OpenQA.Selenium;
+
+namespace TestProject2
+{
+    public class Tests
+    {
+        private IWebDriver _driver;
+        private readonly By _signUpButton = By.XPath("//a[@href='/signup']");
+        private readonly By _registerEmailString = By.XPath("//input[@type='email']");
+        private readonly By _registerPasswordString = By.XPath("//input[@type='password']");
+        private readonly By _registerButton = By.XPath("//button[@class='button is-block is-info is-large is-fullwidth']");
+        private readonly By _FailedRegistrationText = By.XPath("//div[@class='notification is-danger']");
+
+        private const string _expectedFailedRegistrationString = "Email address already exists. Go to login page.";
+        private const string _email = "dogerogcorn@mail.com";
+        private const string _password = "12345";
+
+        [SetUp]
+        public void Setup()
+        {
+            _driver = new OpenQA.Selenium.Chrome.ChromeDriver();
+            _driver.Navigate().GoToUrl("http://localhost:5000/");
+            _driver.Manage().Window.Maximize();
+        }
+
+        [Test]
+        public void Test1()
+        {
+            var singUp = _driver.FindElement(_signUpButton);
+            singUp.Click();
+
+            var emailString = _driver.FindElement(_registerEmailString);
+            emailString.SendKeys(_email);
+
+            Thread.Sleep(400);
+
+            var passwordString = _driver.FindElement(_registerPasswordString);
+            passwordString.SendKeys(_password);
+
+            Thread.Sleep(400);
+
+            var registerButton = _driver.FindElement(_registerButton);
+            registerButton.Click();
+
+            Thread.Sleep(400);
+
+            var repeatRegistrationButton = _driver.FindElement(_signUpButton);
+            repeatRegistrationButton.Click();
+
+            var repeatRegistrationEmailString = _driver.FindElement(_registerEmailString);
+            repeatRegistrationEmailString.SendKeys(_email);
+
+            Thread.Sleep(400);
+
+            var repeatRegistrationPasswordString = _driver.FindElement(_registerPasswordString);
+            repeatRegistrationPasswordString.SendKeys(_password);
+
+            Thread.Sleep(400);
+
+            var repeatRegisterButton = _driver.FindElement(_registerButton);
+            repeatRegisterButton.Click();
+
+            var failedRegistration = _driver.FindElement(_FailedRegistrationText).Text;
+
+            Assert.AreEqual(_expectedFailedRegistrationString, failedRegistration, "Test is failed");
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            _driver.Quit();
+        }
+    }
+}
