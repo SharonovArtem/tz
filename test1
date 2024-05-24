@@ -1,0 +1,68 @@
+using NUnit.Framework;
+using OpenQA.Selenium;
+using System.Threading;
+
+namespace AuthorizationTests
+{
+    public class Tests
+    {
+        private IWebDriver _driver;
+        private readonly By _signUpButton = By.XPath("//*[@href='/signup']");
+        private readonly By _mailString = By.XPath("//input[@type='email']");
+        private readonly By _passwordString = By.XPath("//input[@type='password']");
+        private readonly By _registerButton = By.XPath("//button[@class='button is-block is-info is-large is-fullwidth']");
+        private readonly By _successfulSignInString = By.XPath("//h1[@class='title']");
+        private readonly By _loginButton = By.XPath("//button[@class='button is-block is-info is-large is-fullwidth']");
+
+        private const string _expectedSuccessfulSignInString = "  Welcome, !";
+        private const string _email = "task@gmail.com";
+        private const string _password = "password";
+
+        [SetUp]
+        public void Setup()
+        {
+            _driver = new OpenQA.Selenium.Chrome.ChromeDriver();
+            _driver.Navigate().GoToUrl("http://localhost:5000/");
+            _driver.Manage().Window.Maximize();
+        }
+
+        [Test]
+        public void Test1()
+        {
+            var singIn = _driver.FindElement(_signUpButton);
+            singIn.Click();
+
+            var emailString = _driver.FindElement(_mailString);
+            emailString.SendKeys(_email);
+
+            Thread.Sleep(400);
+
+            var passwordString = _driver.FindElement(_passwordString);
+            passwordString.SendKeys(_password);
+
+            Thread.Sleep(400);
+
+            var registerButton = _driver.FindElement(_registerButton);
+            registerButton.Click();
+
+            emailString.SendKeys(_email);
+
+            Thread.Sleep(400);
+
+            passwordString.SendKeys(_password);
+
+            Thread.Sleep(400);
+
+            var loginButton = _driver.FindElement(_loginButton);
+            loginButton.Click();
+
+            Assert.Equals(_expectedSuccessfulSignInString, _successfulSignInString);
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            _driver.Quit();
+        }
+    }
+}
